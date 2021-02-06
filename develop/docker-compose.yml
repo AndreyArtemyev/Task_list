@@ -1,0 +1,39 @@
+
+version: '3.0'
+
+services:
+  web:
+    container_name: task-backend-web
+    build:
+      context: ./configs/django
+    command: python manage.py runserver 0.0.0.0:8005
+    volumes:
+      - './../:/data:rw'
+    ports:
+      - '8005:8005'
+    depends_on:
+      - mysql
+  mysql:
+    container_name: task-backend-mysql
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - './../_logs/mysql:/var/lib/mysql:rw'
+      - './configs/mysql5.7/my.cnf:/etc/mysql/my.cnf:rw'
+      - './dump/chill.sql:/dump/chill.sql'
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+  pma:
+    container_name: task-backend-phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      - VIRTUAL_HOST=pma.task.local
+      - PMA_HOST=mysql
+    ports:
+      - 8765:80
+    depends_on:
+      - mysql
