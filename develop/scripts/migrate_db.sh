@@ -4,4 +4,5 @@
 container_prefix="task-backend"
 
 
+docker exec $container_prefix"-web" bash -c "python manage.py makemigrations task"
 docker exec $container_prefix"-web" bash -c "python manage.py migrate"
